@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colectica_api.api &mdash; Colectica-API 0.0.3 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Colectica-API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module.html"><code class="docutils literal notranslate"><span class="pre">colectica_api</span></code> module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Colectica-API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">colectica_api.api</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for colectica_api.api</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Colectica API implementation details.</span>
+
+<span class="sd">In most cases you&#39;ll want to work with :class:`ColecticaObject` instead.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+
+<span class="c1"># item type dictionary</span>
+<span class="c1">#   See Item Type Identifiers for a list of identifiers for all item types.</span>
+<span class="c1">#   https://docs.colectica.com/repository/technical/item-type-identifiers/</span>
+<span class="n">item_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;Action&quot;</span><span class="p">:</span> <span class="s2">&quot;0b70f0ba-602a-4575-a15c-91f0915bae36&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Archive&quot;</span><span class="p">:</span> <span class="s2">&quot;ae8ee886-70a2-4c30-a879-b7d92605ba68&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Category&quot;</span><span class="p">:</span> <span class="s2">&quot;7e47c269-bcab-40f7-a778-af7bbc4e3d00&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Category Group&quot;</span><span class="p">:</span> <span class="s2">&quot;8a3ba89d-70da-4ba1-871a-b41954175453&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Category Set&quot;</span><span class="p">:</span> <span class="s2">&quot;1c11de94-a36d-4d80-95dc-950c6f37f624&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ClassificationCorrespondenceTable&quot;</span><span class="p">:</span> <span class="s2">&quot;D55A2705-0AB6-464F-92DD-8E78D10269D8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ClassificationFamily&quot;</span><span class="p">:</span> <span class="s2">&quot;020B8B81-2CCD-4F1D-85BA-F724CE1724AC&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ClassificationIndex&quot;</span><span class="p">:</span> <span class="s2">&quot;F2C1F48C-A119-4576-9475-607E8E8A8A12&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ClassificationItem&quot;</span><span class="p">:</span> <span class="s2">&quot;E96C1674-C4D9-450A-877A-BD37C3060526&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ClassificationLevel&quot;</span><span class="p">:</span> <span class="s2">&quot;EF15C75E-FABA-4192-8FB0-19CF7A3436DB&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ClassificationSeries&quot;</span><span class="p">:</span> <span class="s2">&quot;3844452A-F213-4296-845A-2FC00835F97A&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Code List Group&quot;</span><span class="p">:</span> <span class="s2">&quot;394b9ff3-7248-4ede-b945-9bebdbf56bed&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Code List Set&quot;</span><span class="p">:</span> <span class="s2">&quot;4193d389-b5ae-4368-b399-cd5a7ee3653c&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Code Set&quot;</span><span class="p">:</span> <span class="s2">&quot;8b108ef8-b642-4484-9c49-f88e4bf7cf1d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Concept&quot;</span><span class="p">:</span> <span class="s2">&quot;48b7d4b4-72bf-470a-a885-720f89bfbc40&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Concept Group&quot;</span><span class="p">:</span> <span class="s2">&quot;d38bfe75-60a9-460a-affa-61d643b5416b&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Concept Set&quot;</span><span class="p">:</span> <span class="s2">&quot;63c9f58d-1ea3-4239-99cf-e4418ec384c5&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Conceptual Component&quot;</span><span class="p">:</span> <span class="s2">&quot;d747d7db-ed2a-4339-a156-127f8786d5ec&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Conceptual Variable&quot;</span><span class="p">:</span> <span class="s2">&quot;75f63016-b4f8-45b6-953c-f7ac7364fc25&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Conceptual Variable Group&quot;</span><span class="p">:</span> <span class="s2">&quot;dceb4eb2-e7bb-46f8-804d-d9a86aa5ee9f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Conceptual Variable Set&quot;</span><span class="p">:</span> <span class="s2">&quot;ce0f8af6-db9c-4fb3-a31a-e9523fc53668&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Conditional&quot;</span><span class="p">:</span> <span class="s2">&quot;2af9a279-89ee-4d06-b2d2-54563a6946ea&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Control Construct Group&quot;</span><span class="p">:</span> <span class="s2">&quot;6bcbb890-751d-41e5-a0c9-27d5c951cf93&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Control Construct Set&quot;</span><span class="p">:</span> <span class="s2">&quot;ed3801fe-6798-4ea6-808b-73052cc1c633&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Data Collection&quot;</span><span class="p">:</span> <span class="s2">&quot;c5084916-9936-47a9-a523-93be9fd816d8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Data File&quot;</span><span class="p">:</span> <span class="s2">&quot;a51e85bb-6259-4488-8df2-f08cb43485f8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Data Layout&quot;</span><span class="p">:</span> <span class="s2">&quot;f39ff278-8500-45fe-a850-3906da2d242b&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DataCollection Methodology&quot;</span><span class="p">:</span> <span class="s2">&quot;aa80eb80-c5a9-4215-a59f-4862c6b4009f&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;General Instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;723052be-35ac-4e63-84c6-743a0a693d85&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Generation Instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;eca6afce-0840-421a-beae-d3283fae32b1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Individual&quot;</span><span class="p">:</span> <span class="s2">&quot;1DD920A2-DED8-48B8-B085-D62E49DFC627&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Instruction Group&quot;</span><span class="p">:</span> <span class="s2">&quot;89688a09-e125-4b62-997e-18a14df90578&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Instrument&quot;</span><span class="p">:</span> <span class="s2">&quot;f196cc07-9c99-4725-ad55-5b34f479cf7d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Instrument Group&quot;</span><span class="p">:</span> <span class="s2">&quot;27540e4f-9a3a-415e-8fb9-83c095dc7bcb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Instrument Set&quot;</span><span class="p">:</span> <span class="s2">&quot;f152ee61-08ba-4fca-8a3a-daf8f87f972e&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Interviewer Instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;f53f37b2-6f1b-4af3-b89a-4909d512dfb2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Interviewer Instruction Set&quot;</span><span class="p">:</span> <span class="s2">&quot;5bf598a9-9333-4c84-8c10-46195776800a&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Logical Product&quot;</span><span class="p">:</span> <span class="s2">&quot;965c8d28-7d48-4950-bea7-04b27e52bb9b&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Loop&quot;</span><span class="p">:</span> <span class="s2">&quot;7482a1bf-fea5-4955-9fc0-f76c053e5b2d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Managed Representation Group&quot;</span><span class="p">:</span> <span class="s2">&quot;68cac1f8-a2a6-49a7-9402-58b8df3d1921&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Managed Representation Set&quot;</span><span class="p">:</span> <span class="s2">&quot;16d4d829-41e1-4677-aa17-81190b6a0e66&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MeasurementItem&quot;</span><span class="p">:</span> <span class="s2">&quot;CF6FA3D8-3297-42D5-8922-0BA2D4B5C9FF&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MeasurementConstruct&quot;</span><span class="p">:</span> <span class="s2">&quot;44CB69AC-062C-4EC2-970B-AF73B42D3CB8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Metadata Package&quot;</span><span class="p">:</span> <span class="s2">&quot;679a61f5-4246-4c89-b482-924dec09af98&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NCube&quot;</span><span class="p">:</span> <span class="s2">&quot;b771f5fd-3b29-4f4d-a4f5-6ccae1138c89&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NCube Group&quot;</span><span class="p">:</span> <span class="s2">&quot;47172a68-4b16-4f3b-b484-daace3f45bcc&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;NCube Set&quot;</span><span class="p">:</span> <span class="s2">&quot;31e8515b-c0cc-4e88-9e00-ae4bb6d4ac25&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Organization&quot;</span><span class="p">:</span> <span class="s2">&quot;be33a54f-ca93-454f-9164-8c41df6212cb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Organization Group&quot;</span><span class="p">:</span> <span class="s2">&quot;28455ff2-d6a9-4aa3-9c9f-f6b22b55b3a8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Organization Set&quot;</span><span class="p">:</span> <span class="s2">&quot;08ed326a-8043-4da2-ace9-3f5bd19b6196&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OtherMaterial&quot;</span><span class="p">:</span> <span class="s2">&quot;EACCE1D3-011D-4980-BD4D-6CCFB9161B43&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OtherMaterialGroup&quot;</span><span class="p">:</span> <span class="s2">&quot;E24AFC19-5618-4050-84C7-1A464AF88485&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;OtherMaterialScheme&quot;</span><span class="p">:</span> <span class="s2">&quot;D19C0898-743A-4AAC-A0ED-7BDF979E5957&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Physical Data Product&quot;</span><span class="p">:</span> <span class="s2">&quot;e27aac79-be4a-47d3-96e3-36da178f3923&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Physical Structure&quot;</span><span class="p">:</span> <span class="s2">&quot;b89d26c3-c9e1-4720-a6e4-3a1d8cdb10ce&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PhysicalStructure Set&quot;</span><span class="p">:</span> <span class="s2">&quot;19273b86-934a-4c2c-9b64-bd2b3bb07acd&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Processing Event&quot;</span><span class="p">:</span> <span class="s2">&quot;e99acc19-d127-413d-9cf9-aed786e62055&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Processing Event Group&quot;</span><span class="p">:</span> <span class="s2">&quot;a64a0ab6-5bfa-43dd-a3fb-e791f8f28c58&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Processing Event Set&quot;</span><span class="p">:</span> <span class="s2">&quot;dc15c74b-9b4a-492e-9ddd-4e02eca9d9d7&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Processing Instruction Group&quot;</span><span class="p">:</span> <span class="s2">&quot;c49e2c65-52fb-4948-a454-f3431b834fe7&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Processing Instruction Scheme&quot;</span><span class="p">:</span> <span class="s2">&quot;a1a5c54a-3a7b-4dfb-a5fa-46ed8ef465cc&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Project&quot;</span><span class="p">:</span> <span class="s2">&quot;f2b9352a-d976-4eac-8ee1-0c76da7cfca4&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Quality Standard&quot;</span><span class="p">:</span> <span class="s2">&quot;711e9487-82fd-4682-9309-22e1272bab2c&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Quality Statement&quot;</span><span class="p">:</span> <span class="s2">&quot;831a2d3f-7649-485d-90a4-359e2591e1df&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Quality Statement Group&quot;</span><span class="p">:</span> <span class="s2">&quot;a60d1016-3d44-4182-bbf7-a5812d817f71&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Quality Statement Set&quot;</span><span class="p">:</span> <span class="s2">&quot;4aa7ea9c-495d-4919-95f7-ac107c877f56&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Question&quot;</span><span class="p">:</span> <span class="s2">&quot;a1bb19bd-a24a-4443-8728-a6ad80eb42b8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Question Activity&quot;</span><span class="p">:</span> <span class="s2">&quot;f433e43d-29a4-4c25-9610-9dd9819a0519&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Question Block&quot;</span><span class="p">:</span> <span class="s2">&quot;12d8f742-0433-4f12-88d1-eb9b77ceced5&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Question Grid&quot;</span><span class="p">:</span> <span class="s2">&quot;a1b8a30e-2f35-4056-8467-40e7ed0e7379&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Question Group&quot;</span><span class="p">:</span> <span class="s2">&quot;5cc915a1-23c9-4487-9613-779c62f8c205&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Question Set&quot;</span><span class="p">:</span> <span class="s2">&quot;0a63fcf6-ffdd-4214-b38c-147d6689d6a1&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RecordLayout&quot;</span><span class="p">:</span> <span class="s2">&quot;faddcfca-bedd-450f-9b4e-15c3f2458713&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RecordLayout Set&quot;</span><span class="p">:</span> <span class="s2">&quot;8e4d59db-e757-4e94-bb19-1ac72761566e&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Repeat&quot;</span><span class="p">:</span> <span class="s2">&quot;3a4e92c0-fd99-4d3f-9b66-471674ab7670&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Represented Variable&quot;</span><span class="p">:</span> <span class="s2">&quot;1044459c-8ae2-474a-ad96-6ec18b04953c&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Represented Variable Group&quot;</span><span class="p">:</span> <span class="s2">&quot;a8cecef5-4493-47b8-9c83-82a2f1cfb08e&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Represented Variable Set&quot;</span><span class="p">:</span> <span class="s2">&quot;14404696-2db3-45ac-a94d-139521de6e21&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Reusable Missing Value&quot;</span><span class="p">:</span> <span class="s2">&quot;c29c3125-2a53-4179-8fa6-aa3beb2bb5ed&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sequence&quot;</span><span class="p">:</span> <span class="s2">&quot;df457731-a75c-47c3-aeb4-7969d55aa049&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Series&quot;</span><span class="p">:</span> <span class="s2">&quot;4bd6eef6-99df-40e6-9b11-5b8f64e5cb23&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Statement&quot;</span><span class="p">:</span> <span class="s2">&quot;4a8b1d85-a508-4b4f-8d56-798219f59689&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;StatisticalClassification&quot;</span><span class="p">:</span> <span class="s2">&quot;9BACF643-4EF3-452B-8074-D12EE2404704&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Study&quot;</span><span class="p">:</span> <span class="s2">&quot;30ea0200-7121-4f01-8d21-a931a182b86d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SubSeries&quot;</span><span class="p">:</span> <span class="s2">&quot;2d57296d-095c-485a-b970-8c63c215c1d0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UnitType&quot;</span><span class="p">:</span> <span class="s2">&quot;897D4AA9-0C26-490B-B25E-F29D9FF721A5&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UnitTypeScheme&quot;</span><span class="p">:</span> <span class="s2">&quot;32E1427F-0B88-4FE5-9F2D-5D3EAF585EE8&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;UnitTypeGroup&quot;</span><span class="p">:</span> <span class="s2">&quot;2B0A0A33-D233-40A3-993B-7CEDA290BC8D&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Universe&quot;</span><span class="p">:</span> <span class="s2">&quot;66dfcb67-4915-41ae-9b13-c8ebff6d8e00&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Universe Group&quot;</span><span class="p">:</span> <span class="s2">&quot;a80ecd09-7d81-4512-80bb-cdb60f9a95bf&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Universe Set&quot;</span><span class="p">:</span> <span class="s2">&quot;101f901a-2c28-4931-88d6-8f80b36d5650&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Variable&quot;</span><span class="p">:</span> <span class="s2">&quot;683889c6-f74b-4d5e-92ed-908c0a42bb2d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Variable Group&quot;</span><span class="p">:</span> <span class="s2">&quot;91da6c62-c2c2-4173-8958-22c518d1d40d&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Variable Set&quot;</span><span class="p">:</span> <span class="s2">&quot;50907716-b67a-4dcd-8f9f-8a283cb5fee0&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Variable Statistic&quot;</span><span class="p">:</span> <span class="s2">&quot;3b438f9f-e039-4eac-a06d-3fa1aedf48bb&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;While&quot;</span><span class="p">:</span> <span class="s2">&quot;0681e606-ba3f-453c-9fdd-10670e8e045c&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">item_dict_inv</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<span class="k">def</span> <span class="nf">get_jwtToken</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    First obtain a JWT access token</span>
+<span class="sd">    documented at https://docs.colectica.com/portal/technical/deployment/local-jwt-provider/#usage</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tokenEndpoint</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="n">hostname</span> <span class="o">+</span> <span class="s2">&quot;/token/createtoken&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="n">tokenEndpoint</span><span class="p">,</span>
+        <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">password</span><span class="p">},</span>
+        <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Could not get token. Status code: &quot;</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+        <span class="n">quit</span><span class="p">()</span>
+
+    <span class="n">jsonResponse</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">jwtToken</span> <span class="o">=</span> <span class="n">jsonResponse</span><span class="p">[</span><span class="s2">&quot;access_token&quot;</span><span class="p">]</span>
+    <span class="n">tokenHeader</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer &quot;</span> <span class="o">+</span> <span class="n">jwtToken</span><span class="p">}</span>
+
+    <span class="c1"># get Repository information</span>
+    <span class="c1"># response = requests.get(&quot;https://&quot;+self.host+&quot;/api/v1/repository/info&quot;, headers=tokenHeader, verify=False)</span>
+    <span class="k">return</span> <span class="n">tokenHeader</span>
+
+
+<div class="viewcode-block" id="ColecticaBasicAPI"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI">[docs]</a><span class="k">class</span> <span class="nc">ColecticaBasicAPI</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acts as a frontend to a Colectica portal.</span>
+
+<span class="sd">    This object communicates with a Colectica server.  In most cases, it can</span>
+<span class="sd">    use the newer JSON-based api but still has a deprecated implementation of</span>
+<span class="sd">    the older XML-based api.  The latter involves a lot of manual parsing of</span>
+<span class="sd">    data.</span>
+
+<span class="sd">    You make a new ColecticaBasicAPI by using:</span>
+
+<span class="sd">    &gt;&gt;&gt; C = ColecticaBasicAPI(hostname, username, password)</span>
+
+<span class="sd">    If `hostname`, `username` or `password` are omitted, environment</span>
+<span class="sd">    variables `COLECTICA_HOSTNAME`, `COLECTICA_USERNAME` and `COLECTICA_PASSWORD`</span>
+<span class="sd">    will be used, if they are defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">hostname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">hostname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;COLECTICA_HOSTNAME&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">username</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">username</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;COLECTICA_USERNAME&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">password</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">password</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;COLECTICA_PASSWORD&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connecting to </span><span class="si">{</span><span class="n">hostname</span><span class="si">}</span><span class="s2"> as user </span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">hostname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">get_jwtToken</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">item_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item_dict</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">item_code_inv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_type_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">item_dict_inv</span><span class="p">[</span><span class="n">item_type_id</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_item_xml"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_item_xml">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets an item</span>
+
+<span class="sd">        Frontend to Colectica GET: /api/v1/item/{agency}/{id}</span>
+
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#tag/Item</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            AgencyId (str):</span>
+<span class="sd">            Identifier (str):</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            version (None/int): If omitted we get latest item or you can specify</span>
+<span class="sd">                a particular version.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: with &quot;Item&quot; itself is in xml format</span>
+
+<span class="sd">        Exceptions:</span>
+<span class="sd">            ValueError: the request did not succeed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/item/&quot;</span> <span class="o">+</span> <span class="n">AgencyId</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">Identifier</span>
+        <span class="c1"># use explicit None check so that zero treated</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">uri</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_item_json"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_item_json">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets an item</span>
+
+<span class="sd">        Frontend to Colectica GET: /api/v1/json/{agency}/{id}</span>
+
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#tag/Item</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            AgencyId (str):</span>
+<span class="sd">            Identifier (str):</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            version (None/int): If omitted we get latest item or you can specify</span>
+<span class="sd">                a particular version.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict:</span>
+
+
+<span class="sd">        Exceptions:</span>
+<span class="sd">            ValueError: the request did not succeed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/json/&quot;</span> <span class="o">+</span> <span class="n">AgencyId</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">Identifier</span>
+        <span class="c1"># use explicit None check so that zero treated</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">uri</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+    <span class="c1"># backwards compatibility for old calls without a warning</span>
+    <span class="c1"># get_an_item = get_item_xml</span>
+
+    <span class="k">def</span> <span class="nf">get_an_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="s2">&quot;Warning: this is a deprecated function: use get_item_json or get_item_xml instead&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item_xml</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_item_jsonset"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_item_jsonset">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_jsonset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets an item</span>
+
+<span class="sd">        Frontend to Colectica GET: /api/v1/jsonset/{agency}/{id}</span>
+
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#tag/Item</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            AgencyId (str):</span>
+<span class="sd">            Identifier (str):</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            version (None/int): If omitted we get latest item or you can specify</span>
+<span class="sd">                a particular version.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: with set infomation</span>
+
+<span class="sd">        Exceptions:</span>
+<span class="sd">            ValueError: the request did not succeed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">uri</span> <span class="o">=</span> <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/jsonset/&quot;</span> <span class="o">+</span> <span class="n">AgencyId</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">Identifier</span>
+        <span class="c1"># use explicit None check so that zero treated</span>
+        <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">uri</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_item_version_history"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_item_version_history">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_version_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the version history of an item.</span>
+
+<span class="sd">        Frontend to Colectica GET: /api/v1/item/{agency}/{id}/history</span>
+
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1ItemByAgencyByIdHistoryGet</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            AgencyId (str):</span>
+<span class="sd">            Identifier (str):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict:</span>
+
+<span class="sd">        Exceptions:</span>
+<span class="sd">            ValueError: the request did not succeed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">/api/v1/item/</span><span class="si">{</span><span class="n">AgencyId</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">Identifier</span><span class="si">}</span><span class="s2">/history&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_item_description"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_item_description">[docs]</a>    <span class="k">def</span> <span class="nf">get_item_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="n">Version</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets a description of a repository item.</span>
+
+<span class="sd">        The description contains identification, naming, and summary information,</span>
+<span class="sd">        but not the entire contents of the item.</span>
+
+<span class="sd">        Frontend to Colectica GET: /api/v1/item/{agency}/{id}/{version}/description</span>
+
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1ItemByAgencyByIdByVersionDescriptionGet</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            AgencyId (str):</span>
+<span class="sd">            Identifier (str):</span>
+<span class="sd">            Version (int):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict:</span>
+
+<span class="sd">        Exceptions:</span>
+<span class="sd">            ValueError: the request did not succeed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span>
+            <span class="o">+</span> <span class="s2">&quot;/api/v1/item/&quot;</span>
+            <span class="o">+</span> <span class="n">AgencyId</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="n">Identifier</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">Version</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;/description&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.search_item"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.search_item">[docs]</a>    <span class="k">def</span> <span class="nf">search_item</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item_type</span><span class="p">,</span>
+        <span class="n">search_term</span><span class="p">,</span>
+        <span class="n">MaxResults</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">RankResults</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">SearchDepricatedItems</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">SearchLatestVersion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">UsePrefixSearch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find all items that match certain criteria.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item_type (str): for example `C.item_type(&quot;Question&quot;)` or</span>
+<span class="sd">                `C.item_type(&quot;Variable&quot;)`.</span>
+<span class="sd">            search_term (list/str): for example &quot;home&quot; or a list</span>
+<span class="sd">                `[&quot;work&quot;, &quot;home&quot;]`.</span>
+<span class="sd">            MaxResults (int): how many results to return or 0 to return</span>
+<span class="sd">                all results.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            RankResults (bool/None):</span>
+<span class="sd">            SearchDepricatedItems (bool/None):</span>
+<span class="sd">            SearchLatestVersion (bool/None): Whether to search only the</span>
+<span class="sd">                latest version.</span>
+<span class="sd">            UsePrefixSearch (bool/None): ???</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: the results of the search, including list of matches,</span>
+<span class="sd">            how many matches, etc.</span>
+
+<span class="sd">        For the keyword arguments, if they are omitted (or set to None),</span>
+<span class="sd">        then the server chooses a default value.  This might be documented</span>
+<span class="sd">        elsewhere.</span>
+
+<span class="sd">        This uses the ``/api/v1/_query`` API call.</span>
+
+<span class="sd">        Documented here: https://docs.colectica.com/repository/functionality/rest-api/examples/search/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">search_term</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">search_term</span> <span class="o">=</span> <span class="p">[</span><span class="n">search_term</span><span class="p">]</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ItemTypes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">item_type</span><span class="p">],</span>
+            <span class="s2">&quot;searchTerms&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">*</span><span class="n">search_term</span><span class="p">],</span>
+            <span class="s2">&quot;MaxResults&quot;</span><span class="p">:</span> <span class="n">MaxResults</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">RankResults</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;RankResults&quot;</span><span class="p">:</span> <span class="n">RankResults</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">SearchDepricatedItems</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;SearchDepricatedItems&quot;</span><span class="p">:</span> <span class="n">SearchDepricatedItems</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">SearchLatestVersion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;SearchLatestVersion&quot;</span><span class="p">:</span> <span class="n">SearchLatestVersion</span><span class="p">})</span>
+        <span class="k">if</span> <span class="n">UsePrefixSearch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;UsePrefixSearch&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UsePrefixSearch</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/_query/&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Server returned </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.search_relationship_bysubject"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.search_relationship_bysubject">[docs]</a>    <span class="k">def</span> <span class="nf">search_relationship_bysubject</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item_type</span><span class="p">,</span>
+        <span class="n">AgencyId</span><span class="p">,</span>
+        <span class="n">Identifier</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">Version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">Descriptions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">UseDistinctResultItem</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">UseDistinctTargetItem</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search for items that are related to a particular item.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item_type (str): for example `C.item_type(&quot;Question&quot;)` or</span>
+<span class="sd">                `C.item_type(&quot;Variable&quot;)`.</span>
+<span class="sd">            AgencyId (str): For example, ``&quot;uk.cls.nextsteps&quot;``.</span>
+<span class="sd">            Identifier (str): e.g., ``&quot;a6f96245-5c00-4ad3-89e9-79afaefa0c28&quot;``.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            Version (int/None): if omitted, first make a call to</span>
+<span class="sd">                retrieve the latest version.</span>
+<span class="sd">            Descriptions (bool): if True, return less detail.</span>
+<span class="sd">                Default: False, so return full detail.</span>
+<span class="sd">            UseDistinctResultItem (bool/None): ???</span>
+<span class="sd">            UseDistinctTargetItem (bool/None): ???</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of dicts, each dict is a bit tricky to work with.</span>
+<span class="sd">            There are two top-level keys and other 2nd-level keys::</span>
+
+<span class="sd">                Item1 (outer property)</span>
+<span class="sd">                  - Item1: the UUID of the result</span>
+<span class="sd">                  - Item2: the version number of the result</span>
+<span class="sd">                  - Item3: the agency identifier of the result</span>
+<span class="sd">                Item2: an identifier that indicates the item type of the result.</span>
+
+<span class="sd">            This format is</span>
+<span class="sd">            `documented here &lt;https://docs.colectica.com/repository/functionality/rest-api/examples/relationship-search/&gt;`_.</span>
+
+<span class="sd">        For the keyword arguments, if they are omitted (or set to None),</span>
+<span class="sd">        then the server chooses a default value.  This might be documented</span>
+<span class="sd">        elsewhere.</span>
+
+<span class="sd">        This uses the ``/api/v1/_query/relationship/bysubject/`` API call.</span>
+
+<span class="sd">        Documented here: https://docs.colectica.com/repository/functionality/rest-api/examples/search/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># print(&quot;getting the version...&quot;)</span>
+            <span class="n">Version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item_json</span><span class="p">(</span><span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)[</span><span class="s2">&quot;Version&quot;</span><span class="p">]</span>
+            <span class="c1"># print(f&quot;the version is {Version}&quot;)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ItemTypes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">item_type</span><span class="p">],</span>
+            <span class="s2">&quot;TargetItem&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;AgencyId&quot;</span><span class="p">:</span> <span class="n">AgencyId</span><span class="p">,</span>
+                <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="n">Identifier</span><span class="p">,</span>
+                <span class="s2">&quot;Version&quot;</span><span class="p">:</span> <span class="n">Version</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">UseDistinctResultItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;UseDistinctResultItem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UseDistinctResultItem</span>
+        <span class="k">if</span> <span class="n">UseDistinctTargetItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;UseDistinctTargetItem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UseDistinctTargetItem</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">/api/v1/_query/relationship/bysubject/&quot;</span>
+        <span class="k">if</span> <span class="n">Descriptions</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">+=</span> <span class="s2">&quot;descriptions&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Server returned </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.search_relationship_byobject"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.search_relationship_byobject">[docs]</a>    <span class="k">def</span> <span class="nf">search_relationship_byobject</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item_type</span><span class="p">,</span>
+        <span class="n">AgencyId</span><span class="p">,</span>
+        <span class="n">Identifier</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">Version</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">Descriptions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">UseDistinctResultItem</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">UseDistinctTargetItem</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search for items that are related to a particular item by object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item_type (str): for example `C.item_type(&quot;Question&quot;)` or</span>
+<span class="sd">                `C.item_type(&quot;Variable&quot;)`.</span>
+<span class="sd">            AgencyId (str): For example, ``&quot;uk.cls.nextsteps&quot;``.</span>
+<span class="sd">            Identifier (str): e.g., ``&quot;a6f96245-5c00-4ad3-89e9-79afaefa0c28&quot;``.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            Version (int/None): if omitted, first make a call to</span>
+<span class="sd">                retrieve the latest version.</span>
+<span class="sd">            Descriptions (bool): if True, return less detail.</span>
+<span class="sd">                Default: False, so return full detail.</span>
+<span class="sd">            UseDistinctResultItem (bool/None): ???</span>
+<span class="sd">            UseDistinctTargetItem (bool/None): ???</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of dicts, each dict is a bit tricky to work with.</span>
+<span class="sd">            There are two top-level keys and other 2nd-level keys::</span>
+
+<span class="sd">                Item1 (outer property)</span>
+<span class="sd">                  - Item1: the UUID of the result</span>
+<span class="sd">                  - Item2: the version number of the result</span>
+<span class="sd">                  - Item3: the agency identifier of the result</span>
+<span class="sd">                Item2: an identifier that indicates the item type of the result.</span>
+
+<span class="sd">            This format is</span>
+<span class="sd">            `documented here &lt;https://docs.colectica.com/repository/functionality/rest-api/examples/relationship-search/&gt;`_.</span>
+
+<span class="sd">        For the keyword arguments, if they are omitted (or set to None),</span>
+<span class="sd">        then the server chooses a default value.  This might be documented</span>
+<span class="sd">        elsewhere.</span>
+
+<span class="sd">        This uses the ``/api/v1/_query/relationship/bysubject/`` API call.</span>
+
+<span class="sd">        Documented here: https://docs.colectica.com/repository/functionality/rest-api/examples/search/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># print(&quot;getting the version...&quot;)</span>
+            <span class="n">Version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_item_json</span><span class="p">(</span><span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">)[</span><span class="s2">&quot;Version&quot;</span><span class="p">]</span>
+            <span class="c1"># print(f&quot;the version is {Version}&quot;)</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ItemTypes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">item_type</span><span class="p">],</span>
+            <span class="s2">&quot;TargetItem&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;AgencyId&quot;</span><span class="p">:</span> <span class="n">AgencyId</span><span class="p">,</span>
+                <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="n">Identifier</span><span class="p">,</span>
+                <span class="s2">&quot;Version&quot;</span><span class="p">:</span> <span class="n">Version</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">UseDistinctResultItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;UseDistinctResultItem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UseDistinctResultItem</span>
+        <span class="k">if</span> <span class="n">UseDistinctTargetItem</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">query</span><span class="p">[</span><span class="s2">&quot;UseDistinctTargetItem&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">UseDistinctTargetItem</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">/api/v1/_query/relationship/byobject/&quot;</span>
+        <span class="k">if</span> <span class="n">Descriptions</span><span class="p">:</span>
+            <span class="n">url</span> <span class="o">+=</span> <span class="s2">&quot;descriptions&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">query</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Server returned </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.search_set"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.search_set">[docs]</a>    <span class="k">def</span> <span class="nf">search_set</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">item_types</span><span class="p">,</span>
+        <span class="n">AgencyId</span><span class="p">,</span>
+        <span class="n">Identifier</span><span class="p">,</span>
+        <span class="n">MaxResults</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find all items that are somehow connected to a given item.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            item_types (str/list[str]): the item types to search for.</span>
+<span class="sd">                or all types if empty.  You can omit the list if</span>
+<span class="sd">                searching for just one item type.</span>
+<span class="sd">            AgencyId (str):</span>
+<span class="sd">            Identifier (str):</span>
+<span class="sd">            MaxResults (int): how many results to return or 0 to return</span>
+<span class="sd">                all results.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: the results of the search, including list of matches,</span>
+<span class="sd">            how many matches, etc.</span>
+
+<span class="sd">        For the keyword arguments, if they are omitted (or set to None),</span>
+<span class="sd">        then the server chooses a default value.  This might be documented</span>
+<span class="sd">        elsewhere.</span>
+
+<span class="sd">        This uses the ``/api/v1/_query`` API call.</span>
+
+<span class="sd">        Documented here: https://docs.colectica.com/repository/functionality/rest-api/examples/search/</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_types</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">item_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">item_types</span><span class="p">]</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;ItemTypes&quot;</span><span class="p">:</span> <span class="n">item_types</span><span class="p">,</span>
+            <span class="s2">&quot;MaxResults&quot;</span><span class="p">:</span> <span class="n">MaxResults</span><span class="p">,</span>
+            <span class="s2">&quot;searchSets&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;agencyId&quot;</span><span class="p">:</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="n">Identifier</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/_query/&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Server returned </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> error: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
+
+    <span class="c1"># ----------------------------------------</span>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.relationship_matrix"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.relationship_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">relationship_matrix</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="n">Version</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="n">ReverseTraversal</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a matrix representing all items in a set and the relationships among those items.</span>
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1_queryRelationshipMatrixPost</span>
+<span class="sd">        Request Type: POST</span>
+<span class="sd">        URL: /api/v1/_query/relationship/matrix</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">jsonquery</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;RootItems&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;AgencyId&quot;</span><span class="p">:</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="n">Identifier</span><span class="p">,</span> <span class="s2">&quot;Version&quot;</span><span class="p">:</span> <span class="n">Version</span><span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;Facet&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Predicate&quot;</span><span class="p">:</span> <span class="n">Predicate</span><span class="p">,</span> <span class="s2">&quot;ReverseTraversal&quot;</span><span class="p">:</span> <span class="n">ReverseTraversal</span><span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/_query/relationship/matrix&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">jsonquery</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.relationship_matrix_typed"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.relationship_matrix_typed">[docs]</a>    <span class="k">def</span> <span class="nf">relationship_matrix_typed</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="n">Version</span><span class="p">,</span> <span class="n">Predicate</span><span class="p">,</span> <span class="n">ReverseTraversal</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a matrix representing all items in a set and the relationships among those items.</span>
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1_queryRelationshipMatrixPost</span>
+<span class="sd">        Request Type: POST</span>
+<span class="sd">        URL: /api/v1/_query/relationship/matrix/typed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">jsonquery</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;RootItems&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;AgencyId&quot;</span><span class="p">:</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">:</span> <span class="n">Identifier</span><span class="p">,</span> <span class="s2">&quot;Version&quot;</span><span class="p">:</span> <span class="n">Version</span><span class="p">}</span>
+            <span class="p">],</span>
+            <span class="s2">&quot;Facet&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;Predicate&quot;</span><span class="p">:</span> <span class="n">Predicate</span><span class="p">,</span> <span class="s2">&quot;ReverseTraversal&quot;</span><span class="p">:</span> <span class="n">ReverseTraversal</span><span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/_query/relationship/matrix/typed&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">json</span><span class="o">=</span><span class="n">jsonquery</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_a_set"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_a_set">[docs]</a>    <span class="k">def</span> <span class="nf">get_a_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="n">Version</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the set of all items under the specified root.</span>
+
+<span class="sd">        Frontend to Colectica GET: /api/v1/set/{agency}/{id}/{version}</span>
+
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdByVersionGet</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            AgencyId (str):</span>
+<span class="sd">            Identifier (str):</span>
+<span class="sd">            Version (str):</span>
+<span class="sd">            hostname (str):</span>
+<span class="sd">            tokenHeader (str):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span>
+            <span class="o">+</span> <span class="s2">&quot;/api/v1/set/&quot;</span>
+            <span class="o">+</span> <span class="n">AgencyId</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="n">Identifier</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="n">Version</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_a_set_typed"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_a_set_typed">[docs]</a>    <span class="k">def</span> <span class="nf">get_a_set_typed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">,</span> <span class="n">Version</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the set of items defined by the specified root. Each item in the set will have the latest version number for that item.</span>
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdByVersionTypedGet</span>
+<span class="sd">        Request Type: GET</span>
+<span class="sd">        URL: /api/v1/set/{agency}/{id}/{version}/typed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span>
+            <span class="o">+</span> <span class="s2">&quot;/api/v1/set/&quot;</span>
+            <span class="o">+</span> <span class="n">AgencyId</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="n">Identifier</span>
+            <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+            <span class="o">+</span> <span class="n">Version</span>
+            <span class="o">+</span> <span class="s2">&quot;/typed&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ColecticaBasicAPI.get_a_set_lasted"><a class="viewcode-back" href="../../module.html#colectica_api.ColecticaBasicAPI.get_a_set_lasted">[docs]</a>    <span class="k">def</span> <span class="nf">get_a_set_lasted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">AgencyId</span><span class="p">,</span> <span class="n">Identifier</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the set of items defined by the specified root. Each item in the set will have the latest version number for that item.</span>
+<span class="sd">        https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdGet</span>
+<span class="sd">        Request Type: GET</span>
+<span class="sd">        URL: /api/v1/set/{agency}/{id}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;https://&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">+</span> <span class="s2">&quot;/api/v1/set/&quot;</span> <span class="o">+</span> <span class="n">AgencyId</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">Identifier</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="p">,</span>
+            <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> <span class="o">!=</span> <span class="p">[]:</span>
+                <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;don&#39;t run this directly&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Jenny Li.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

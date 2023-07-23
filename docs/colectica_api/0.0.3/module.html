@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>colectica_api module &mdash; Colectica-API 0.0.3 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Installing" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Colectica-API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">colectica_api</span></code> module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_a_set"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_a_set()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_a_set_lasted"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_a_set_lasted()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_a_set_typed"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_a_set_typed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_item_description"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_item_description()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_item_json"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_item_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_item_jsonset"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_item_jsonset()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_item_version_history"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_item_version_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.get_item_xml"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.get_item_xml()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.relationship_matrix"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.relationship_matrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.relationship_matrix_typed"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.relationship_matrix_typed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.search_item"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.search_item()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.search_relationship_byobject"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.search_relationship_byobject()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.search_relationship_bysubject"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.search_relationship_bysubject()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaBasicAPI.search_set"><code class="docutils literal notranslate"><span class="pre">ColecticaBasicAPI.search_set()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#colectica_api.ColecticaObject"><code class="docutils literal notranslate"><span class="pre">ColecticaObject</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaObject.get_a_set_to_df"><code class="docutils literal notranslate"><span class="pre">ColecticaObject.get_a_set_to_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaObject.get_question_all"><code class="docutils literal notranslate"><span class="pre">ColecticaObject.get_question_all()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaObject.get_question_info"><code class="docutils literal notranslate"><span class="pre">ColecticaObject.get_question_info()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaObject.item_info_set"><code class="docutils literal notranslate"><span class="pre">ColecticaObject.item_info_set()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#colectica_api.ColecticaObject.item_to_dict"><code class="docutils literal notranslate"><span class="pre">ColecticaObject.item_to_dict()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Colectica-API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="docutils literal notranslate"><span class="pre">colectica_api</span></code> module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/module.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-colectica_api">
+<span id="colectica-api-module"></span><h1><code class="docutils literal notranslate"><span class="pre">colectica_api</span></code> module<a class="headerlink" href="#module-colectica_api" title="Permalink to this heading"></a></h1>
+<p>The colectica_api module exposes a ColecticaObject which
+handles communication with a Colectica server (using its
+REST api).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">colectica_api.</span></span><span class="sig-name descname"><span class="pre">ColecticaBasicAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI" title="Permalink to this definition"></a></dt>
+<dd><p>Acts as a frontend to a Colectica portal.</p>
+<p>This object communicates with a Colectica server.  In most cases, it can
+use the newer JSON-based api but still has a deprecated implementation of
+the older XML-based api.  The latter involves a lot of manual parsing of
+data.</p>
+<p>You make a new ColecticaBasicAPI by using:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">ColecticaBasicAPI</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If <cite>hostname</cite>, <cite>username</cite> or <cite>password</cite> are omitted, environment
+variables <cite>COLECTICA_HOSTNAME</cite>, <cite>COLECTICA_USERNAME</cite> and <cite>COLECTICA_PASSWORD</cite>
+will be used, if they are defined.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_a_set">
+<span class="sig-name descname"><span class="pre">get_a_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_a_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_a_set" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the set of all items under the specified root.</p>
+<p>Frontend to Colectica GET: /api/v1/set/{agency}/{id}/{version}</p>
+<p><a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdByVersionGet">https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdByVersionGet</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Version</strong> (<em>str</em>) – </p></li>
+<li><p><strong>hostname</strong> (<em>str</em>) – </p></li>
+<li><p><strong>tokenHeader</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_a_set_lasted">
+<span class="sig-name descname"><span class="pre">get_a_set_lasted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_a_set_lasted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_a_set_lasted" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the set of items defined by the specified root. Each item in the set will have the latest version number for that item.
+<a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdGet">https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdGet</a>
+Request Type: GET
+URL: /api/v1/set/{agency}/{id}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_a_set_typed">
+<span class="sig-name descname"><span class="pre">get_a_set_typed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_a_set_typed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_a_set_typed" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the set of items defined by the specified root. Each item in the set will have the latest version number for that item.
+<a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdByVersionTypedGet">https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1SetByAgencyByIdByVersionTypedGet</a>
+Request Type: GET
+URL: /api/v1/set/{agency}/{id}/{version}/typed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_item_description">
+<span class="sig-name descname"><span class="pre">get_item_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_item_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_item_description" title="Permalink to this definition"></a></dt>
+<dd><p>Gets a description of a repository item.</p>
+<p>The description contains identification, naming, and summary information,
+but not the entire contents of the item.</p>
+<p>Frontend to Colectica GET: /api/v1/item/{agency}/{id}/{version}/description</p>
+<p><a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1ItemByAgencyByIdByVersionDescriptionGet">https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1ItemByAgencyByIdByVersionDescriptionGet</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Version</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Exceptions:</dt><dd><p>ValueError: the request did not succeed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_item_json">
+<span class="sig-name descname"><span class="pre">get_item_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_item_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_item_json" title="Permalink to this definition"></a></dt>
+<dd><p>Gets an item</p>
+<p>Frontend to Colectica GET: /api/v1/json/{agency}/{id}</p>
+<p><a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#tag/Item">https://docs.colectica.com/portal/technical/api/v1/#tag/Item</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>version</strong> (<em>None/int</em>) – If omitted we get latest item or you can specify
+a particular version.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Exceptions:</dt><dd><p>ValueError: the request did not succeed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_item_jsonset">
+<span class="sig-name descname"><span class="pre">get_item_jsonset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_item_jsonset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_item_jsonset" title="Permalink to this definition"></a></dt>
+<dd><p>Gets an item</p>
+<p>Frontend to Colectica GET: /api/v1/jsonset/{agency}/{id}</p>
+<p><a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#tag/Item">https://docs.colectica.com/portal/technical/api/v1/#tag/Item</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>version</strong> (<em>None/int</em>) – If omitted we get latest item or you can specify
+a particular version.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>with set infomation</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Exceptions:</dt><dd><p>ValueError: the request did not succeed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_item_version_history">
+<span class="sig-name descname"><span class="pre">get_item_version_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_item_version_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_item_version_history" title="Permalink to this definition"></a></dt>
+<dd><p>Gets the version history of an item.</p>
+<p>Frontend to Colectica GET: /api/v1/item/{agency}/{id}/history</p>
+<p><a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1ItemByAgencyByIdHistoryGet">https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1ItemByAgencyByIdHistoryGet</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Exceptions:</dt><dd><p>ValueError: the request did not succeed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.get_item_xml">
+<span class="sig-name descname"><span class="pre">get_item_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.get_item_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.get_item_xml" title="Permalink to this definition"></a></dt>
+<dd><p>Gets an item</p>
+<p>Frontend to Colectica GET: /api/v1/item/{agency}/{id}</p>
+<p><a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#tag/Item">https://docs.colectica.com/portal/technical/api/v1/#tag/Item</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>version</strong> (<em>None/int</em>) – If omitted we get latest item or you can specify
+a particular version.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>with “Item” itself is in xml format</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Exceptions:</dt><dd><p>ValueError: the request did not succeed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.relationship_matrix">
+<span class="sig-name descname"><span class="pre">relationship_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ReverseTraversal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.relationship_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.relationship_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Gets a matrix representing all items in a set and the relationships among those items.
+<a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1_queryRelationshipMatrixPost">https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1_queryRelationshipMatrixPost</a>
+Request Type: POST
+URL: /api/v1/_query/relationship/matrix</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.relationship_matrix_typed">
+<span class="sig-name descname"><span class="pre">relationship_matrix_typed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ReverseTraversal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.relationship_matrix_typed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.relationship_matrix_typed" title="Permalink to this definition"></a></dt>
+<dd><p>Gets a matrix representing all items in a set and the relationships among those items.
+<a class="reference external" href="https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1_queryRelationshipMatrixPost">https://docs.colectica.com/portal/technical/api/v1/#operation/ApiV1_queryRelationshipMatrixPost</a>
+Request Type: POST
+URL: /api/v1/_query/relationship/matrix/typed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.search_item">
+<span class="sig-name descname"><span class="pre">search_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_term</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MaxResults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RankResults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SearchDepricatedItems</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SearchLatestVersion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">UsePrefixSearch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.search_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.search_item" title="Permalink to this definition"></a></dt>
+<dd><p>Find all items that match certain criteria.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item_type</strong> (<em>str</em>) – for example <cite>C.item_type(“Question”)</cite> or
+<cite>C.item_type(“Variable”)</cite>.</p></li>
+<li><p><strong>search_term</strong> (<em>list/str</em>) – for example “home” or a list
+<cite>[“work”, “home”]</cite>.</p></li>
+<li><p><strong>MaxResults</strong> (<em>int</em>) – how many results to return or 0 to return
+all results.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RankResults</strong> (<em>bool/None</em>) – </p></li>
+<li><p><strong>SearchDepricatedItems</strong> (<em>bool/None</em>) – </p></li>
+<li><p><strong>SearchLatestVersion</strong> (<em>bool/None</em>) – Whether to search only the
+latest version.</p></li>
+<li><p><strong>UsePrefixSearch</strong> (<em>bool/None</em>) – <p>???</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the results of the search, including list of matches,
+how many matches, etc.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p>For the keyword arguments, if they are omitted (or set to None),
+then the server chooses a default value.  This might be documented
+elsewhere.</p>
+<p>This uses the <code class="docutils literal notranslate"><span class="pre">/api/v1/_query</span></code> API call.</p>
+<p>Documented here: <a class="reference external" href="https://docs.colectica.com/repository/functionality/rest-api/examples/search/">https://docs.colectica.com/repository/functionality/rest-api/examples/search/</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.search_relationship_byobject">
+<span class="sig-name descname"><span class="pre">search_relationship_byobject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">UseDistinctResultItem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">UseDistinctTargetItem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.search_relationship_byobject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.search_relationship_byobject" title="Permalink to this definition"></a></dt>
+<dd><p>Search for items that are related to a particular item by object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item_type</strong> (<em>str</em>) – for example <cite>C.item_type(“Question”)</cite> or
+<cite>C.item_type(“Variable”)</cite>.</p></li>
+<li><p><strong>AgencyId</strong> (<em>str</em>) – For example, <code class="docutils literal notranslate"><span class="pre">&quot;uk.cls.nextsteps&quot;</span></code>.</p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – e.g., <code class="docutils literal notranslate"><span class="pre">&quot;a6f96245-5c00-4ad3-89e9-79afaefa0c28&quot;</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Version</strong> (<em>int/None</em>) – if omitted, first make a call to
+retrieve the latest version.</p></li>
+<li><p><strong>Descriptions</strong> (<em>bool</em>) – if True, return less detail.
+Default: False, so return full detail.</p></li>
+<li><p><strong>UseDistinctResultItem</strong> (<em>bool/None</em>) – <p>???</p>
+</p></li>
+<li><p><strong>UseDistinctTargetItem</strong> (<em>bool/None</em>) – <p>???</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>A list of dicts, each dict is a bit tricky to work with.
+There are two top-level keys and other 2nd-level keys:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Item1</span> <span class="p">(</span><span class="n">outer</span> <span class="nb">property</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Item1</span><span class="p">:</span> <span class="n">the</span> <span class="n">UUID</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span>
+  <span class="o">-</span> <span class="n">Item2</span><span class="p">:</span> <span class="n">the</span> <span class="n">version</span> <span class="n">number</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span>
+  <span class="o">-</span> <span class="n">Item3</span><span class="p">:</span> <span class="n">the</span> <span class="n">agency</span> <span class="n">identifier</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span>
+<span class="n">Item2</span><span class="p">:</span> <span class="n">an</span> <span class="n">identifier</span> <span class="n">that</span> <span class="n">indicates</span> <span class="n">the</span> <span class="n">item</span> <span class="nb">type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This format is
+<a class="reference external" href="https://docs.colectica.com/repository/functionality/rest-api/examples/relationship-search/">documented here</a>.</p>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+<p>For the keyword arguments, if they are omitted (or set to None),
+then the server chooses a default value.  This might be documented
+elsewhere.</p>
+<p>This uses the <code class="docutils literal notranslate"><span class="pre">/api/v1/_query/relationship/bysubject/</span></code> API call.</p>
+<p>Documented here: <a class="reference external" href="https://docs.colectica.com/repository/functionality/rest-api/examples/search/">https://docs.colectica.com/repository/functionality/rest-api/examples/search/</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.search_relationship_bysubject">
+<span class="sig-name descname"><span class="pre">search_relationship_bysubject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Descriptions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">UseDistinctResultItem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">UseDistinctTargetItem</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.search_relationship_bysubject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.search_relationship_bysubject" title="Permalink to this definition"></a></dt>
+<dd><p>Search for items that are related to a particular item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item_type</strong> (<em>str</em>) – for example <cite>C.item_type(“Question”)</cite> or
+<cite>C.item_type(“Variable”)</cite>.</p></li>
+<li><p><strong>AgencyId</strong> (<em>str</em>) – For example, <code class="docutils literal notranslate"><span class="pre">&quot;uk.cls.nextsteps&quot;</span></code>.</p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – e.g., <code class="docutils literal notranslate"><span class="pre">&quot;a6f96245-5c00-4ad3-89e9-79afaefa0c28&quot;</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>Version</strong> (<em>int/None</em>) – if omitted, first make a call to
+retrieve the latest version.</p></li>
+<li><p><strong>Descriptions</strong> (<em>bool</em>) – if True, return less detail.
+Default: False, so return full detail.</p></li>
+<li><p><strong>UseDistinctResultItem</strong> (<em>bool/None</em>) – <p>???</p>
+</p></li>
+<li><p><strong>UseDistinctTargetItem</strong> (<em>bool/None</em>) – <p>???</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>A list of dicts, each dict is a bit tricky to work with.
+There are two top-level keys and other 2nd-level keys:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Item1</span> <span class="p">(</span><span class="n">outer</span> <span class="nb">property</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Item1</span><span class="p">:</span> <span class="n">the</span> <span class="n">UUID</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span>
+  <span class="o">-</span> <span class="n">Item2</span><span class="p">:</span> <span class="n">the</span> <span class="n">version</span> <span class="n">number</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span>
+  <span class="o">-</span> <span class="n">Item3</span><span class="p">:</span> <span class="n">the</span> <span class="n">agency</span> <span class="n">identifier</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span>
+<span class="n">Item2</span><span class="p">:</span> <span class="n">an</span> <span class="n">identifier</span> <span class="n">that</span> <span class="n">indicates</span> <span class="n">the</span> <span class="n">item</span> <span class="nb">type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">result</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This format is
+<a class="reference external" href="https://docs.colectica.com/repository/functionality/rest-api/examples/relationship-search/">documented here</a>.</p>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+<p>For the keyword arguments, if they are omitted (or set to None),
+then the server chooses a default value.  This might be documented
+elsewhere.</p>
+<p>This uses the <code class="docutils literal notranslate"><span class="pre">/api/v1/_query/relationship/bysubject/</span></code> API call.</p>
+<p>Documented here: <a class="reference external" href="https://docs.colectica.com/repository/functionality/rest-api/examples/search/">https://docs.colectica.com/repository/functionality/rest-api/examples/search/</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaBasicAPI.search_set">
+<span class="sig-name descname"><span class="pre">search_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item_types</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">MaxResults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/api.html#ColecticaBasicAPI.search_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaBasicAPI.search_set" title="Permalink to this definition"></a></dt>
+<dd><p>Find all items that are somehow connected to a given item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item_types</strong> (<em>str/list</em><em>[</em><em>str</em><em>]</em>) – the item types to search for.
+or all types if empty.  You can omit the list if
+searching for just one item type.</p></li>
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+<li><p><strong>MaxResults</strong> (<em>int</em>) – how many results to return or 0 to return
+all results.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the results of the search, including list of matches,
+how many matches, etc.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+<p>For the keyword arguments, if they are omitted (or set to None),
+then the server chooses a default value.  This might be documented
+elsewhere.</p>
+<p>This uses the <code class="docutils literal notranslate"><span class="pre">/api/v1/_query</span></code> API call.</p>
+<p>Documented here: <a class="reference external" href="https://docs.colectica.com/repository/functionality/rest-api/examples/search/">https://docs.colectica.com/repository/functionality/rest-api/examples/search/</a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="colectica_api.ColecticaObject">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">colectica_api.</span></span><span class="sig-name descname"><span class="pre">ColecticaObject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hostname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/colectica.html#ColecticaObject"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaObject" title="Permalink to this definition"></a></dt>
+<dd><p>Ask practical questions to a Colectica server.</p>
+<p>This extends <a class="reference internal" href="#colectica_api.ColecticaBasicAPI" title="colectica_api.ColecticaBasicAPI"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColecticaBasicAPI</span></code></a> by adding additional useful
+methods.</p>
+<p>You make a new ColecticaObject by using:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">C</span> <span class="o">=</span> <span class="n">ColecticaObject</span><span class="p">(</span><span class="n">hostname</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If <cite>hostname</cite>, <cite>username</cite> or <cite>password</cite> are omitted, environment
+variables <cite>COLECTICA_HOSTNAME</cite>, <cite>COLECTICA_USERNAME</cite> and <cite>COLECTICA_PASSWORD</cite>
+will be used, if they are defined.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaObject.get_a_set_to_df">
+<span class="sig-name descname"><span class="pre">get_a_set_to_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/colectica.html#ColecticaObject.get_a_set_to_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaObject.get_a_set_to_df" title="Permalink to this definition"></a></dt>
+<dd><p>Find all items that are somehow connected to a given item, using <code class="docutils literal notranslate"><span class="pre">get_a_set_typed</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Version</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>with columns [“ItemType”, “Agency”, “Identifier”, “Version”]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaObject.get_question_all">
+<span class="sig-name descname"><span class="pre">get_question_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/colectica.html#ColecticaObject.get_question_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaObject.get_question_all" title="Permalink to this definition"></a></dt>
+<dd><p>From a question ID, return question info and it’s response</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>with column name [‘QuestionURN’, ‘QuestionItemName’, ‘response_type’, ‘Label’, ‘DateTypeCode’]</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pandas dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaObject.get_question_info">
+<span class="sig-name descname"><span class="pre">get_question_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/colectica.html#ColecticaObject.get_question_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaObject.get_question_info" title="Permalink to this definition"></a></dt>
+<dd><p>From a question identifier, get information about</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaObject.item_info_set">
+<span class="sig-name descname"><span class="pre">item_info_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/colectica.html#ColecticaObject.item_info_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaObject.item_info_set" title="Permalink to this definition"></a></dt>
+<dd><p>Find latest version of an item and it’s set</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – </p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A 2-tuple <cite>(df, info)</cite> consisting of a Pandas dataframe of a set
+and a dict with info about the item.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="colectica_api.ColecticaObject.item_to_dict">
+<span class="sig-name descname"><span class="pre">item_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">AgencyId</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/colectica_api/colectica.html#ColecticaObject.item_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#colectica_api.ColecticaObject.item_to_dict" title="Permalink to this definition"></a></dt>
+<dd><p>From an agency ID and an identifier, get information using <code class="docutils literal notranslate"><span class="pre">get_an_item</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AgencyId</strong> (<em>str</em>) – For example, <code class="docutils literal notranslate"><span class="pre">&quot;uk.cls.nextsteps&quot;</span></code>.</p></li>
+<li><p><strong>Identifier</strong> (<em>str</em>) – e.g., <code class="docutils literal notranslate"><span class="pre">&quot;a6f96245-5c00-4ad3-89e9-79afaefa0c28&quot;</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Version</strong> (<em>int/None</em>) – if omitted, get the latest version.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a dictionary of the item contents.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023 Jenny Li.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
